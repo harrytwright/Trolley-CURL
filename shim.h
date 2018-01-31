@@ -2,10 +2,14 @@
 #define _shim_h_
 
 #include <curl/curl.h>
+#include <CoreFoundation/CoreFoundation.h>
 
 #define TOption(_name, _curl_option) TCURLOption##_name = _curl_option
 
-typedef enum {
+typedef long Integer;
+
+/** Swift helper version of the CURLOPT */
+typedef CF_ENUM(Integer, TCURLOption) {
   /* This is the FILE * or void * the regular output should be written to. */
   TOption(WriteData, CURLOPT_WRITEDATA),
 
@@ -874,6 +878,6 @@ typedef enum {
 
   /* Suppress proxy CONNECT response headers from user callbacks */
   TOption(SuppressConnectHeaders, CURLOPT_SUPPRESS_CONNECT_HEADERS),
-} TCURLOption;
+} CF_SWIFT_NAME(Option);
 
 #endif /* _shim_h_ */
