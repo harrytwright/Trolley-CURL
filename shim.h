@@ -21,7 +21,10 @@ CF_ASSUME_NONNULL_BEGIN
 static CFErrorRef curl_code_to_error(CURLcode code) {
     /* TODO */
     CFMutableDictionaryRef dictionary = CFDictionaryCreateMutable(nil, 0, nil, nil);
-    CFDictionarySetValue(dict, kCFErrorLocalizedDescriptionKey, CFSTR(curl_easy_strerror(code)));
+
+    CFStringRef errorDesc = CFStringCreateWithCString(NULL, curl_easy_strerror(code), kCFStringEncodingUTF8);
+    CFDictionarySetValue(dictionary, kCFErrorLocalizedDescriptionKey, errorDesc);
+    
     return CFErrorCreate(NULL, CFSTR("trl.mbaas.curl.swift"), code, dictionary);
 }
 
@@ -950,11 +953,11 @@ static CURLcode curl_easy_set_opt_func(CURL *__nullable handle, TCURLOption opti
 static Integer curl_easy_set_opt(CURL *__nullable handle, TCURLOption option, AnyVoid value, CFErrorRef *error)
 {
     CURLcode code;
-    if ((code = curl_easy_setopt(handle, option, value)) != 0) {
+    if ((code = curl_easy_setopt(handle, option, value)) != CURLE_OK) {
         *error = curl_code_to_error(code);
-        return code
+        return code;
     }
-    return 0
+    return CURLE_OK;
 }
 CF_ASSUME_NONNULL_END
 
