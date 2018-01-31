@@ -2,19 +2,16 @@
 #define _shim_h_
 
 #include <curl/curl.h>
-#include <CoreFoundation/CoreFoundation.h>
 
-#if !defined(CF_SWIFT_NAME)
-#define CF_SWIFT_NAME(_name)
-#endif
-
-#if !defined(CF_ENUM)
-#define CF_ENUM(_type, _name) _type _name ; enum
+#if __has_attribute(swift_name)
+# define CF_SWIFT_NAME(_name) /* __attribute__((swift_name(#_name))) */
+#else
+# define CF_SWIFT_NAME(_name)
 #endif
 
 #define TOption(_name, _curl_option) TCURLOption##_name = _curl_option
 
-typedef CF_ENUM(int, TCURLOption) {
+typedef enum {
   /* This is the FILE * or void * the regular output should be written to. */
   TOption(WriteData, CURLOPT_WRITEDATA),
 
@@ -883,6 +880,6 @@ typedef CF_ENUM(int, TCURLOption) {
 
   /* Suppress proxy CONNECT response headers from user callbacks */
   TOption(SuppressConnectHeaders, CURLOPT_SUPPRESS_CONNECT_HEADERS),
-};
+} TCURLOption;
 
 #endif /* _shim_h_ */
