@@ -899,7 +899,7 @@ typedef void * AnyVoid;
 
 typedef long long cInt64;
 
-typedef cString const char *;
+typedef const char * cString;
 
 /* Work around, do not CF_SWIFT_NAME them as we will be wrapping them in the CURL object */
 static CURLcode curl_easy_set_opt_long(CURL *handle, TCURLOption option, long value)
