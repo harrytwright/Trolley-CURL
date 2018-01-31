@@ -951,36 +951,39 @@ typedef CF_ENUM(Integer, TCURLOption) {
 //}
 
 #define ___curl_easy_set_opt(_c, _o, _v, _e) \
-CURLcode code = curl_easy_setopt(_c, _o, _v); \
-if (code != CURLE_OK && _e) { \
-    *_e = curl_code_to_error(code); \
-}
-static void curl_easy_set_opt_long(CURL *__nullable handle, TCURLOption option, long value, CFErrorRef *error)
+    CURLcode code = curl_easy_setopt(_c, _o, _v); \
+    if (code != CURLE_OK && _e) { \
+        *_e = curl_code_to_error(code); \
+        return false;\
+    } \
+    return true;
+
+static Boolean curl_easy_set_opt_long(CURL * handle, TCURLOption option, long value, CFErrorRef *error)
 {
     ___curl_easy_set_opt(handle, option, value, error)
 }
 
-static void curl_easy_set_opt_cstr(CURL *__nullable handle, TCURLOption option, CString value, CFErrorRef *error)
+static Boolean curl_easy_set_opt_cstr(CURL * handle, TCURLOption option, CString value, CFErrorRef *error)
 {
     ___curl_easy_set_opt(handle, option, value, error)
 }
 
-static void curl_easy_set_opt_int64(CURL *__nullable handle, TCURLOption option, CInt64 value, CFErrorRef *error)
+static Boolean curl_easy_set_opt_int64(CURL * handle, TCURLOption option, CInt64 value, CFErrorRef *error)
 {
     ___curl_easy_set_opt(handle, option, value, error)
 }
 
-static void curl_easy_set_opt_slist(CURL *__nullable handle, TCURLOption option, CSList value, CFErrorRef *error)
+static Boolean curl_easy_set_opt_slist(CURL * handle, TCURLOption option, CSList value, CFErrorRef *error)
 {
     ___curl_easy_set_opt(handle, option, value, error)
 }
 
-static void curl_easy_set_opt_void(CURL *__nullable handle, TCURLOption option, AnyVoid value, CFErrorRef *error)
+static Boolean curl_easy_set_opt_void(CURL * handle, TCURLOption option, AnyVoid value, CFErrorRef *error)
 {
     ___curl_easy_set_opt(handle, option, value, error)
 }
 
-static void curl_easy_set_opt_func(CURL *__nullable handle, TCURLOption option, curl_func value, CFErrorRef *error)
+static Boolean curl_easy_set_opt_func(CURL * handle, TCURLOption option, curl_func value, CFErrorRef *error)
 {
     ___curl_easy_set_opt(handle, option, value, error)
 }
