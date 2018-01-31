@@ -3,12 +3,6 @@
 
 #include <curl/curl.h>
 
-#if __has_attribute(swift_name)
-# define CF_SWIFT_NAME(_name) /* __attribute__((swift_name(#_name))) */
-#else
-# define CF_SWIFT_NAME(_name)
-#endif
-
 #define TOption(_name, _curl_option) TCURLOption##_name = _curl_option
 
 typedef enum {
@@ -70,7 +64,7 @@ typedef enum {
 
   /* Set the FTP PORT string (interface name, named or numerical IP address)
      Use i.e '-' to use default address. */
-  TOption(FTTPort, CURLOPT_FTPPORT) CF_SWIFT_NAME(FTPPort),
+  TOption(FTTPort, CURLOPT_FTPPORT),
 
   /* Set the User-Agent string (examined by some CGIs) */
   TOption(UserAgent, CURLOPT_USERAGENT),
@@ -100,19 +94,19 @@ typedef enum {
 
   /* This points to a linked list of headers, struct curl_slist kind. This
      list is also used for RTSP (in spite of its name) */
-  TOption(HTTPHeader, CURLOPT_HTTPHEADER) CF_SWIFT_NAME(HTTPHeader),
+  TOption(HTTPHeader, CURLOPT_HTTPHEADER),
 
   /* This points to a linked list of post entries, struct curl_httppost */
-  TOption(HTTPPost, CURLOPT_HTTPPOST) CF_SWIFT_NAME(HTTPPost),
+  TOption(HTTPPost, CURLOPT_HTTPPOST),
 
   /* name of the file keeping your private SSL-certificate */
-  TOption(SSLCert, CURLOPT_SSLCERT) CF_SWIFT_NAME(sslCert),
+  TOption(SSLCert, CURLOPT_SSLCERT),
 
   /* password for the SSL or SSH private key */
   TOption(KeyPassword, CURLOPT_KEYPASSWD),
 
   /* send TYPE parameter? */
-  TOption(CLRF, CURLOPT_CRLF) CF_SWIFT_NAME(CLRF),
+  TOption(CLRF, CURLOPT_CRLF),
 
   /* send linked-list of QUOTE commands */
   TOption(Quote, CURLOPT_QUOTE),
@@ -127,7 +121,7 @@ typedef enum {
 
   /* What version to specifically try to use.
      See CURL_SSLVERSION defines below. */
-  TOption(SSLVersion, CURLOPT_SSLVERSION) CF_SWIFT_NAME(sslVersion),
+  TOption(SSLVersion, CURLOPT_SSLVERSION),
 
   /* What kind of HTTP time condition to use, see defines */
   TOption(TimeCondition, CURLOPT_TIMECONDITION),
@@ -206,7 +200,7 @@ typedef enum {
   TOption(KrbLevel, CURLOPT_KRBLEVEL),
 
   /* Set if we should verify the peer in ssl handshake, set 1 to verify. */
-  TOption(SSLVerifyPeer, CURLOPT_SSL_VERIFYPEER) CF_SWIFT_NAME(sslVerifyPeer),
+  TOption(SSLVerifyPeer, CURLOPT_SSL_VERIFYPEER),
 
   /* The CApath or CAfile used to validate the peer certificate
      this option is used only if SSL_VERIFYPEER is true */
@@ -258,14 +252,14 @@ typedef enum {
   /* Set if we should verify the Common name from the peer certificate in ssl
    * handshake, set 1 to check existence, 2 to ensure that it matches the
    * provided hostname. */
-  TOption(SSLVerifyHost, CURLOPT_SSL_VERIFYHOST) CF_SWIFT_NAME(sslVerifyHost),
+  TOption(SSLVerifyHost, CURLOPT_SSL_VERIFYHOST) ,
 
   /* Specify which file name to write all known cookies in after completed
      operation. Set file name to "-" (dash) to make it go to stdout. */
   TOption(CookieJar, CURLOPT_COOKIEJAR),
 
   /* Specify which SSL ciphers to use */
-  TOption(SSLCipherList, CURLOPT_SSL_CIPHER_LIST) CF_SWIFT_NAME(sslCipherList),
+  TOption(SSLCipherList, CURLOPT_SSL_CIPHER_LIST),
 
   /* Specify which HTTP version to use! This must be set to one of the
      CURL_HTTP_VERSION* enums set below. */
@@ -277,21 +271,21 @@ typedef enum {
   TOption(FTPUseEPSV, CURLOPT_FTP_USE_EPSV),
 
   /* type of the file keeping your SSL-certificate ("DER", "PEM", "ENG") */
-  TOption(SSLCertType, CURLOPT_SSLCERTTYPE) CF_SWIFT_NAME(sslCertType),
+  TOption(SSLCertType, CURLOPT_SSLCERTTYPE),
 
   /* name of the file keeping your private SSL-key */
-  TOption(SSLKey, CURLOPT_SSLKEY) CF_SWIFT_NAME(sslKey),
+  TOption(SSLKey, CURLOPT_SSLKEY),
 
   /* type of the file keeping your private SSL-key ("DER", "PEM", "ENG") */
-  TOption(SSLKeyType, CURLOPT_SSLKEYTYPE) CF_SWIFT_NAME(sslKeyType),
+  TOption(SSLKeyType, CURLOPT_SSLKEYTYPE),
 
   /* crypto engine for the SSL-sub system */
-  TOption(SSLEngine, CURLOPT_SSLENGINE) CF_SWIFT_NAME(sslEngine),
+  TOption(SSLEngine, CURLOPT_SSLENGINE),
 
   /* set the crypto engine for the SSL-sub system as default
      the param has no meaning...
    */
-  TOption(SSLEngineDefault, CURLOPT_SSLENGINE_DEFAULT) CF_SWIFT_NAME(sslEngineDefault),
+  TOption(SSLEngineDefault, CURLOPT_SSLENGINE_DEFAULT),
 
   /* Non-zero value means to use the global dns cache */
   TOption(DNSUseGlobalCache, CURLOPT_DNS_USE_GLOBAL_CACHE), /* DEPRECATED, do not use! */
@@ -360,11 +354,11 @@ typedef enum {
   /* Set the ssl context callback function, currently only for OpenSSL ssl_ctx
      in second argument. The function must be matching the
      curl_ssl_ctx_callback proto. */
-  TOption(SSLCtxFunction, CURLOPT_SSL_CTX_FUNCTION) CF_SWIFT_NAME(sslCtxFunction),
+  TOption(SSLCtxFunction, CURLOPT_SSL_CTX_FUNCTION),
 
   /* Set the userdata for the ssl context callback function's third
      argument */
-  TOption(SSLCtxData, CURLOPT_SSL_CTX_DATA) CF_SWIFT_NAME(sslCtxData),
+  TOption(SSLCtxData, CURLOPT_SSL_CTX_DATA),
 
   /* FTP Option that causes missing dirs to be created on the remote server.
      In 7.19.4 we introduced the convenience enums for this option using the
@@ -704,11 +698,11 @@ typedef enum {
   TOption(AcceptTimeoutMs, CURLOPT_ACCEPTTIMEOUT_MS),
 
   /* Set TCP keepalive */
-  TOption(TCPKeepAlive, CURLOPT_TCP_KEEPALIVE) CF_SWIFT_NAME(tcpKeepAlive),
+  TOption(TCPKeepAlive, CURLOPT_TCP_KEEPALIVE),
 
   /* non-universal keepalive knobs (Linux, AIX, HP-UX, more) */
-  TOption(TCPKeepIdle, CURLOPT_TCP_KEEPIDLE) CF_SWIFT_NAME(tcpKeepIdle),
-  TOption(TCPKeepIntvl, CURLOPT_TCP_KEEPINTVL) CF_SWIFT_NAME(tcpKeepIntvl),
+  TOption(TCPKeepIdle, CURLOPT_TCP_KEEPIDLE) ,
+  TOption(TCPKeepIntvl, CURLOPT_TCP_KEEPINTVL),
 
   /* Enable/disable specific SSL features with a bitmask, see CURLSSLOPT_* */
   TOption(SSLOptions, CURLOPT_SSL_OPTIONS),
@@ -805,7 +799,7 @@ typedef enum {
   TOption(ConnectTo, CURLOPT_CONNECT_TO),
 
   /* Set TCP Fast Open */
-  TOption(TCPFastOpen, CURLOPT_TCP_FASTOPEN) CF_SWIFT_NAME(tcpFastOpen),
+  TOption(TCPFastOpen, CURLOPT_TCP_FASTOPEN),
 
   /* Continue to send data if the server responds early with an
    * HTTP status code >= 300 */
