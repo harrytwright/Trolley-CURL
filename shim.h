@@ -14,6 +14,19 @@
 /** Use CoreFoundation to help wrap, will need to see if works with linux, if not work around?? */
 #include <CoreFoundation/CoreFoundation.h>
 
+CF_ASSUME_NONNULL_BEGIN
+
+#pragma mark - Error Handling
+
+static CFErrorRef curl_code_to_error(CURLcode code) {
+    /* TODO */
+    CFMutableDictionaryRef dictionary = CFDictionaryCreateMutable(nil, 0, nil, nil);
+    CFDictionarySetValue(dict, kCFErrorLocalizedDescriptionKey, CFSTR(curl_easy_strerror(code)));
+    return CFErrorCreate(NULL, CFSTR("trl.mbaas.curl.swift"), code, dictionary);
+}
+
+#pragma mark - Options
+
 /** Set the new option with the old one */
 #define TOption(_name, _curl_option) TCURLOption##_name = _curl_option
 
@@ -891,45 +904,58 @@ typedef CF_ENUM(Integer, TCURLOption) {
   TOption(SuppressConnectHeaders, CURLOPT_SUPPRESS_CONNECT_HEADERS),
 } CF_SWIFT_NAME(Option);
 
+#pragma mark - Setters
+
 typedef size_t (*curl_func)(void * ptr, size_t size, size_t num, void * ud);
 
 typedef struct curl_slist * SList;
 
 typedef void * AnyVoid;
 
-typedef long long cInt64;
+typedef long long CInt64;
 
-typedef const char * cString;
+typedef const char * CString;
 
 /* Work around, do not CF_SWIFT_NAME them as we will be wrapping them in the CURL object */
-static CURLcode curl_easy_set_opt_long(CURL *handle, TCURLOption option, long value)
+static CURLcode curl_easy_set_opt_long(CURL *__nullable handle, TCURLOption option, long value)
 {
     return curl_easy_setopt(handle, option, value);
 }
 
-static CURLcode curl_easy_set_opt_cstr(CURL *handle, TCURLOption option, cString value)
+static CURLcode curl_easy_set_opt_cstr(CURL *__nullable handle, TCURLOption option, CString value)
 {
     return curl_easy_setopt(handle, option, value);
 }
 
-static CURLcode curl_easy_set_opt_int64(CURL *handle, TCURLOption option, cInt64 value)
+static CURLcode curl_easy_set_opt_int64(CURL *__nullable handle, TCURLOption option, CInt64 value)
 {
     return curl_easy_setopt(handle, option, value);
 }
 
-static CURLcode curl_easy_set_opt_slist(CURL *handle, TCURLOption option, SList value)
+static CURLcode curl_easy_set_opt_slist(CURL *__nullable handle, TCURLOption option, SList value)
 {
     return curl_easy_setopt(handle, option, value);
 }
 
-static CURLcode curl_easy_set_opt_void(CURL *handle, TCURLOption option, AnyVoid value)
+static CURLcode curl_easy_set_opt_void(CURL *__nullable handle, TCURLOption option, AnyVoid value)
 {
     return curl_easy_setopt(handle, option, value);
 }
 
-static CURLcode curl_easy_set_opt_func(CURL *handle, TCURLOption option, curl_func value)
+static CURLcode curl_easy_set_opt_func(CURL *__nullable handle, TCURLOption option, curl_func value)
 {
     return curl_easy_setopt(handle, option, value);
 }
+
+static Integer curl_easy_set_opt(CURL *__nullable handle, TCURLOption option, AnyVoid value, CFErrorRef *error)
+{
+    CURLcode code;
+    if ((code = curl_easy_setopt(handle, option, value)) != 0) {
+        *error = curl_code_to_error(code);
+        return code
+    }
+    return 0
+}
+CF_ASSUME_NONNULL_END
 
 #endif /* _shim_h_ */
