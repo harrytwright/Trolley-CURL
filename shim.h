@@ -1,9 +1,20 @@
+/************************************************************************
+ *                                                                      *
+ *                                                                      *
+ *                        CURL Swift Wrapper                            *
+ *                                                                      *
+ *                                                                      *
+ ************************************************************************/
+
 #ifndef _shim_h_
 #define _shim_h_
 
 #include <curl/curl.h>
+
+/** Use CoreFoundation to help wrap, will need to see if works with linux, if not work around?? */
 #include <CoreFoundation/CoreFoundation.h>
 
+/** Set the new option with the old one */
 #define TOption(_name, _curl_option) TCURLOption##_name = _curl_option
 
 typedef long Integer;
@@ -879,5 +890,46 @@ typedef CF_ENUM(Integer, TCURLOption) {
   /* Suppress proxy CONNECT response headers from user callbacks */
   TOption(SuppressConnectHeaders, CURLOPT_SUPPRESS_CONNECT_HEADERS),
 } CF_SWIFT_NAME(Option);
+
+typedef size_t (*curl_func)(void * ptr, size_t size, size_t num, void * ud);
+
+typedef struct curl_slist * SList;
+
+typedef void * AnyVoid;
+
+typedef long long cInt64;
+
+typedef cString const char *;
+
+/* Work around, do not CF_SWIFT_NAME them as we will be wrapping them in the CURL object */
+static CURLcode curl_easy_set_opt_long(CURL *handle, TCURLOption option, long value)
+{
+    return curl_easy_setopt(handle, option, value);
+}
+
+static CURLcode curl_easy_set_opt_cstr(CURL *handle, TCURLOption option, cString value)
+{
+    return curl_easy_setopt(handle, option, value);
+}
+
+static CURLcode curl_easy_set_opt_int64(CURL *handle, TCURLOption option, cInt64 value)
+{
+    return curl_easy_setopt(handle, option, value);
+}
+
+static CURLcode curl_easy_set_opt_slist(CURL *handle, TCURLOption option, SList value)
+{
+    return curl_easy_setopt(handle, option, value);
+}
+
+static CURLcode curl_easy_set_opt_void(CURL *handle, TCURLOption option, AnyVoid value)
+{
+    return curl_easy_setopt(handle, option, value);
+}
+
+static CURLcode curl_easy_set_opt_func(CURL *handle, TCURLOption option, curl_func value)
+{
+    return curl_easy_setopt(handle, option, value);
+}
 
 #endif /* _shim_h_ */
