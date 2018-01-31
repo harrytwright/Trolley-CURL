@@ -1,4 +1,4 @@
-module TrolleyCURL [system] {
+module cURL [system] {
     header "shim.h"
     link "curl"
     export *
