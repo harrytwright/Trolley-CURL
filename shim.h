@@ -981,7 +981,7 @@ static CInt64 curl_easy_get_info_int64(CURL * handle, CURLINFO info, CFErrorRef 
 }
 
 static CSList curl_easy_get_info_list(CURL * handle, CURLINFO info, CFErrorRef *error) {
-    CSList value; __curl_easy_get_info(handle, info, error, CSList); return value
+    CSList value; __curl_easy_get_info(handle, info, error, value); return value;
 }
 
 #endif /* _shim_h_ */
