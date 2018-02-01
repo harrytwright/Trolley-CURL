@@ -260,7 +260,7 @@ typedef CF_ENUM(Integer, TCURLOption) {
   TCOption(FileTime, CURLOPT_FILETIME),
 
   /* This points to a linked list of telnet options */
-  TCOption(TelneTCOptions, CURLOPT_TELNETCOptionS),
+  TCOption(TelnetOptions, CURLOPT_TELNETOPTIONS),
 
   /* Max amount of cached alive connections */
   TCOption(MaxConnects, CURLOPT_MAXCONNECTS),
@@ -923,6 +923,37 @@ typedef CF_ENUM(Integer, TCURLOption) {
 } CF_SWIFT_NAME(Option);
 
 #pragma mark - Setters
+
+/* Work around, do not CF_SWIFT_NAME them as we will be wrapping them in the CURL object */
+//static CURLcode curl_easy_set_opt_long(CURL *__nullable handle, TCURLOption option, long value)
+//{
+//    return curl_easy_setopt(handle, option, value);
+//}
+//
+//static CURLcode curl_easy_set_opt_cstr(CURL *__nullable handle, TCURLOption option, CString value)
+//{
+//    return curl_easy_setopt(handle, option, value);
+//}
+//
+//static CURLcode curl_easy_set_opt_int64(CURL *__nullable handle, TCURLOption option, CInt64 value)
+//{
+//    return curl_easy_setopt(handle, option, value);
+//}
+//
+//static CURLcode curl_easy_set_opt_slist(CURL *__nullable handle, TCURLOption option, CSList value)
+//{
+//    return curl_easy_setopt(handle, option, value);
+//}
+//
+//static CURLcode curl_easy_set_opt_void(CURL *__nullable handle, TCURLOption option, AnyVoid value)
+//{
+//    return curl_easy_setopt(handle, option, value);
+//}
+//
+//static CURLcode curl_easy_set_opt_func(CURL *__nullable handle, TCURLOption option, curl_func value)
+//{
+//    return curl_easy_setopt(handle, option, value);
+//}
 
 #define ___curl_easy_set_opt(_c, _o, _v, _e) \
     CURLcode code = curl_easy_setopt(_c, _o, _v); \
