@@ -960,5 +960,18 @@ static void curl_easy_set_opt_func(CURL * handle, TCURLOption option, curl_func 
     ___curl_easy_set_opt(handle, option, value, error)
 }
 
+#pragma mark - Getters
+
+#define ___curl_easy_get_info(_c, _i, _e, _v) \
+CURLcode code = curl_easy_getinfo(_c, _i, &_v); \
+if (code != CURLE_OK && _e) { \
+*_e = curl_code_to_error(code); \
+} \
+
+static CString curl_easy_get_info(CURL * handle, CURLINFO info, CFErrorRef *error) {
+    CString string;
+    ___curl_easy_get_info(handle, info, error, string)
+}
+
 
 #endif /* _shim_h_ */
