@@ -969,7 +969,7 @@ if (code != CURLE_OK && _e) { \
 } \
 
 static CString curl_easy_get_info_cstr(CURL * handle, CURLINFO info, CFErrorRef *error) {
-    CString value; ___curl_easy_get_info(handle, info, error, string); return value;
+    CString value; ___curl_easy_get_info(handle, info, error, value); return value;
 }
 
 static long curl_easy_get_info_long(CURL * handle, CURLINFO info, CFErrorRef *error) {
