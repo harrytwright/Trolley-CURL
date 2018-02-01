@@ -928,7 +928,7 @@ typedef CF_ENUM(Integer, TCURLOption) {
     CURLcode code = curl_easy_setopt(_c, _o, _v); \
     if (code != CURLE_OK && _e) { \
         *_e = curl_code_to_error(code); \
-    } \
+    }
 
 static void curl_easy_set_opt_long(CURL * handle, TCURLOption option, long value, CFErrorRef *error)
 {
@@ -966,11 +966,12 @@ static void curl_easy_set_opt_func(CURL * handle, TCURLOption option, curl_func 
 CURLcode code = curl_easy_getinfo(_c, _i, &_v); \
 if (code != CURLE_OK && _e) { \
 *_e = curl_code_to_error(code); \
-} \
+}
 
 static CString curl_easy_get_info(CURL * handle, CURLINFO info, CFErrorRef *error) {
     CString string;
     ___curl_easy_get_info(handle, info, error, string)
+    return string;
 }
 
 
