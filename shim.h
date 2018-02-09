@@ -28,6 +28,10 @@ typedef long long CInt64;
 
 typedef const char * CString;
 
+inline static CFStringRef kCURLWrapperErrorCode(void) {
+  return CFSTR("trl.curl.swift.wrapper.more.dots.hehe")
+}
+
 #pragma mark - Error Handling
 
 static CFErrorRef curl_code_to_error(CURLcode code) {
@@ -35,7 +39,7 @@ static CFErrorRef curl_code_to_error(CURLcode code) {
     CFMutableDictionaryRef dictionary = CFDictionaryCreateMutable(nil, 0, nil, nil);
     CFDictionarySetValue(dictionary, kCFErrorLocalizedDescriptionKey, errorDesc);
 
-    return CFErrorCreate(NULL, CFSTR("trl.mbaas.curl.swift"), code, dictionary);
+    return CFErrorCreate(NULL, kCURLWrapperErrorCode(), code, dictionary);
 }
 
 #pragma mark - Options
@@ -989,7 +993,7 @@ typedef CF_ENUM(Integer, TCURLInfo) {
 
 #define TCGlobalOptions(...) TCWrapper(TCURLGlobalOptions , __VA_ARGS__)
 
-typedef CF_OPTIONS(NSInteger, TCURLGlobalOptions) {
+typedef CF_OPTIONS(Integer, TCURLGlobalOptions) {
     TCGlobalOptions(SSL, CURL_GLOBAL_SSL),
     TCGlobalOptions(WIN32, CURL_GLOBAL_WIN32),
     TCGlobalOptions(All, CURL_GLOBAL_ALL),
@@ -998,6 +1002,7 @@ typedef CF_OPTIONS(NSInteger, TCURLGlobalOptions) {
     TCGlobalOptions(ACKEINTR, CURL_GLOBAL_ACK_EINTR),
 } CF_SWIFT_NAME(GlobalOptions);
 
+/** CF_SWIFT_NAME() is used so we can keep it as close to the curl one so it makes sense */
 static NSInteger curl_global_init_with_options(TCURLGlobalOptions options) CF_SWIFT_NAME(TCURLGlobalInit(_:));
 
 static NSInteger curl_global_init_with_options(TCURLGlobalOptions options) {
@@ -1009,7 +1014,7 @@ static CFErrorRef kCFErrorInvalidOption(TCURLOption option) {
     CFMutableDictionaryRef dictionary = CFDictionaryCreateMutable(nil, 0, nil, nil);
     CFDictionarySetValue(dictionary, kCFErrorLocalizedDescriptionKey, errorDesc);
 
-    return CFErrorCreate(NULL, CFSTR("trl.mbaas.curl.swift"), option, dictionary);
+    return CFErrorCreate(NULL, kCURLWrapperErrorCode(), option, dictionary);
 }
 
 #pragma mark - Setters
