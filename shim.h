@@ -936,7 +936,7 @@ static CFErrorRef kCFErrorInvalidOption(TCURLOption option) {
 #pragma mark - Setters
 
 #define ___curl_easy_set_opt(_c, _o, _v, _e) \
-    if (_o == TCURLOptionPostData) { _e = kCFErrorInvalidOption(TCURLOptionPostData); return; }\
+    if (_o == TCURLOptionPostData) { if (_e) { *_e = kCFErrorInvalidOption(TCURLOptionPostData); } return; }\
     CURLcode code = curl_easy_setopt(_c, _o, _v); \
     if (code != CURLE_OK && _e) { \
         *_e = curl_code_to_error(code); \
