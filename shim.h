@@ -38,14 +38,6 @@ static CFErrorRef curl_code_to_error(CURLcode code) {
     return CFErrorCreate(NULL, CFSTR("trl.mbaas.curl.swift"), code, dictionary);
 }
 
-static CFErrorRef kCFErrorInvalidOption(TCURLOption option) {
-    CFStringRef errorDesc = CFStringCreateWithCString(NULL, "Invalid Option", kCFStringEncodingUTF8);
-    CFMutableDictionaryRef dictionary = CFDictionaryCreateMutable(nil, 0, nil, nil);
-    CFDictionarySetValue(dictionary, kCFErrorLocalizedDescriptionKey, errorDesc);
-
-    return CFErrorCreate(NULL, CFSTR("trl.mbaas.curl.swift"), option, dictionary);
-}
-
 #pragma mark - Options
 
 #define __TCOption_GET_MACRO(_1, _2, _3, NAME, ...) NAME
@@ -932,6 +924,14 @@ typedef CF_ENUM(Integer, TCURLOption) {
     /* Custom option, sending this will set `CURLOPT_POSTFILEDSIZE_LARGE` and `CURLOPT_COPYPOSTFIELDS` */
     TCOption(PostData),
 } CF_SWIFT_NAME(Option);
+
+static CFErrorRef kCFErrorInvalidOption(TCURLOption option) {
+    CFStringRef errorDesc = CFStringCreateWithCString(NULL, "Invalid Option", kCFStringEncodingUTF8);
+    CFMutableDictionaryRef dictionary = CFDictionaryCreateMutable(nil, 0, nil, nil);
+    CFDictionarySetValue(dictionary, kCFErrorLocalizedDescriptionKey, errorDesc);
+
+    return CFErrorCreate(NULL, CFSTR("trl.mbaas.curl.swift"), option, dictionary);
+}
 
 #pragma mark - Setters
 
