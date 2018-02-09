@@ -38,6 +38,14 @@ static CFErrorRef curl_code_to_error(CURLcode code) {
     return CFErrorCreate(NULL, CFSTR("trl.mbaas.curl.swift"), code, dictionary);
 }
 
+static CFErrorRef kCFErrorInvalidOption() {
+    CFStringRef errorDesc = CFStringCreateWithCString(NULL, CFSTR("Invalid Option"), kCFStringEncodingUTF8);
+    CFMutableDictionaryRef dictionary = CFDictionaryCreateMutable(nil, 0, nil, nil);
+    CFDictionarySetValue(dictionary, kCFErrorLocalizedDescriptionKey, errorDesc);
+
+    return CFErrorCreate(NULL, CFSTR("trl.mbaas.curl.swift"), code, dictionary);
+}
+
 #pragma mark - Options
 
 #define __TCOption_GET_MACRO(_1, _2, _3, NAME, ...) NAME
@@ -928,19 +936,11 @@ typedef CF_ENUM(Integer, TCURLOption) {
 #pragma mark - Setters
 
 #define ___curl_easy_set_opt(_c, _o, _v, _e) \
+    if (_o == TCURLOptionPostData) { _e = kCFErrorInvalidOption; return; }\
     CURLcode code = curl_easy_setopt(_c, _o, _v); \
     if (code != CURLE_OK && _e) { \
         *_e = curl_code_to_error(code); \
     }
-
-#define ARRAY_LENGTH(x) (sizeof(x) / sizeof((x)[0]))
-
-static void curl_easy_set_post_data(CURL * handle, UInt8 data[], CFErrorRef *error)
-{
-    ___curl_easy_set_opt(handle, TCURLOptionPostfieldSize, (int)ARRAY_LENGTH(data), error)
-    if (error) { return; }
-    ___curl_easy_set_opt(handle, TCURLOptionCopyPostFields, data, error);
-}
 
 static void curl_easy_set_opt_long(CURL * handle, TCURLOption option, long value, CFErrorRef *error)
 {
