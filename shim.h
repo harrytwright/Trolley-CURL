@@ -936,8 +936,8 @@ typedef CF_ENUM(Integer, TCURLOption) {
 #define ARRAY_LENGTH(x) (sizeof(x) / sizeof((x)[0]))
 
 static void curl_easy_set_post_data(CURL * handle, UInt8 data[], CFErrorRef *error) {
-    curl_easy_set_opt_long(handle, TCURLOptionPostfieldSize, (int) ARRAY_LENGTH(data), error);
-    if (error) { return }
+    curl_easy_set_opt_long(handle, TCURLOptionPostfieldSize, (int)ARRAY_LENGTH(data), error);
+    if (error) { return; }
     curl_easy_set_opt_void(handle, TCURLOptionCopyPostFields, &data, error);
 }
 
