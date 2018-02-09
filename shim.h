@@ -49,11 +49,6 @@ static CFErrorRef curl_code_to_error(CURLcode code) {
 /** Set the new option with the old one */
 #define TCWrapper(x, ...) __TC_WRAPPER_GET_MACRO(__VA_ARGS__, __TC_WRAPPER_SWIFT_NAME, __TC_WRAPPER_C, __TC_WRAPPER_ANON, ) (x, __VA_ARGS__)
 
-// #define __TCOption_GET_MACRO(_1, _2, _3, NAME, ...) NAME
-// #define __TCOption_Anon(_name) TCURLOption##_name
-// #define __TCOption_C(_name, _type) TCURLOption##_name = _type
-// #define __TCOption_SWIFT_NAME(_name, _type, _swift) TCURLOption##_name CF_SWIFT_NAME(_swift) = _type
-
 /** Set the new option with the old one */
 #define TCOption(...) TCWrapper(TCURLOption, __VA_ARGS__)
 
@@ -934,13 +929,63 @@ typedef CF_ENUM(Integer, TCURLOption) {
     TCOption(PostData),
 } CF_SWIFT_NAME(Option);
 
-#define __TCInfo_GET_MACRO(_1, _2, _3, NAME, ...) NAME
-#define __TCInfo_Anon(_name) TCURLInfo##_name
-#define __TCInfo_C(_name, _type) TCURLInfo##_name = _type
-#define __TCInfo_SWIFT_NAME(_name, _type, _swift) TCURLInfo##_name CF_SWIFT_NAME(_swift) = _type
+#define TCInfo(...) TCWrapper(TCURLInfo , __VA_ARGS__)
 
-/** Set the new option with the old one */
-#define TCInfo(...) __TCInfo_GET_MACRO(__VA_ARGS__, __TCInfo_SWIFT_NAME, __TCInfo_C, __TCInfo_Anon, ) (__VA_ARGS__)
+typedef CF_ENUM(Integer, TCURLInfo) {
+    TCInfo(EffectiveURL, CURLINFO_EFFECTIVE_URL),
+    TCInfo(ResponseCode, CURLINFO_RESPONSE_CODE),
+    TCInfo(TotalTime, CURLINFO_TOTAL_TIME),
+    TCInfo(NameLookUpTime, CURLINFO_NAMELOOKUP_TIME),
+    TCInfo(ConnectTime, CURLINFO_CONNECT_TIME),
+    TCInfo(PreTransferTime, CURLINFO_PRETRANSFER_TIME),
+    TCInfo(SizeUpload, CURLINFO_SIZE_UPLOAD),
+    TCInfo(SizeDownload, CURLINFO_SIZE_DOWNLOAD),
+    TCInfo(SpeedDownload, CURLINFO_SPEED_DOWNLOAD),
+    TCInfo(SpeedUpload, CURLINFO_SPEED_UPLOAD),
+    TCInfo(HeaderSize, CURLINFO_HEADER_SIZE),
+    TCInfo(RequestSize, CURLINFO_REQUEST_SIZE),
+    TCInfo(SSLVerifyResult, CURLINFO_SSL_VERIFYRESULT),
+    TCInfo(FileTime, CURLINFO_FILETIME),
+    TCInfo(ContentLengthDownload, CURLINFO_CONTENT_LENGTH_DOWNLOAD),
+    TCInfo(ContentLengthUpload, CURLINFO_CONTENT_LENGTH_UPLOAD),
+    TCInfo(StartTransferTime, CURLINFO_STARTTRANSFER_TIME),
+    TCInfo(ContentType, CURLINFO_CONTENT_TYPE),
+    TCInfo(RedirectTime, CURLINFO_REDIRECT_TIME),
+    TCInfo(RedirectCount, CURLINFO_REDIRECT_COUNT),
+    TCInfo(Private, CURLINFO_PRIVATE),
+    TCInfo(HTTPConnectCode, CURLINFO_HTTP_CONNECTCODE),
+    TCInfo(HTTPAuthAvailable, CURLINFO_HTTPAUTH_AVAIL),
+    TCInfo(ProxyAuthAvailable, CURLINFO_PROXYAUTH_AVAIL),
+    TCInfo(OSErrno, CURLINFO_OS_ERRNO),
+    TCInfo(NumConnects, CURLINFO_NUM_CONNECTS),
+    TCInfo(SSLEngines, CURLINFO_SSL_ENGINES),
+    TCInfo(CookieList, CURLINFO_COOKIELIST),
+    TCInfo(LastSocket, CURLINFO_LASTSOCKET),
+    TCInfo(FTPEntryPath, CURLINFO_FTP_ENTRY_PATH),
+    TCInfo(RedirectURL, CURLINFO_REDIRECT_URL),
+    TCInfo(PrimaryIP, CURLINFO_PRIMARY_IP),
+    TCInfo(AppConnectTime, CURLINFO_APPCONNECT_TIME),
+    TCInfo(CertInfo, CURLINFO_CERTINFO),
+    TCInfo(ConfitionUnmet, CURLINFO_CONDITION_UNMET),
+    TCInfo(RTSPSessionID, CURLINFO_RTSP_SESSION_ID),
+    TCInfo(RTSPClientCseq, CURLINFO_RTSP_CLIENT_CSEQ),
+    TCInfo(RTSPServerCseq, CURLINFO_RTSP_SERVER_CSEQ),
+    TCInfo(RTSPCseqRecieved, CURLINFO_RTSP_CSEQ_RECV),
+    TCInfo(PrimaryPort, CURLINFO_PRIMARY_PORT),
+    TCInfo(LocalIP, CURLINFO_LOCAL_IP),
+    TCInfo(LocalPort, CURLINFO_LOCAL_PORT),
+    TCInfo(TLSSession, CURLINFO_TLS_SESSION),
+    TCInfo(ActiveSocket, CURLINFO_ACTIVESOCKET),
+    TCInfo(TLSSLLPTR, CURLINFO_TLS_SSL_PTR),
+    TCInfo(HTTPVersion, CURLINFO_HTTP_VERSION),
+    TCInfo(SSLVerifyResult, CURLINFO_PROXY_SSL_VERIFYRESULT),
+    TCInfo(Protocol, CURLINFO_PROTOCOL),
+    TCInfo(Scheme, CURLINFO_SCHEME),
+
+    /* Fill in new entries below here! */
+
+    TCInfo(LastOne, CURLINFO_LASTONE),
+} CF_SWIFT_NAME(Info);
 
 static CFErrorRef kCFErrorInvalidOption(TCURLOption option) {
     CFStringRef errorDesc = CFStringCreateWithCString(NULL, "Invalid Option", kCFStringEncodingUTF8);
@@ -997,19 +1042,19 @@ if (code != CURLE_OK && _e) { \
 *_e = curl_code_to_error(code); \
 } \
 
-static CString curl_easy_get_info_cstr(CURL * handle, CURLINFO info, CFErrorRef *error) {
+static CString curl_easy_get_info_cstr(CURL * handle, TCURLInfo info, CFErrorRef *error) {
     CString value; ___curl_easy_get_info(handle, info, error, value); return value;
 }
 
-static long curl_easy_get_info_long(CURL * handle, CURLINFO info, CFErrorRef *error) {
+static long curl_easy_get_info_long(CURL * handle, TCURLInfo info, CFErrorRef *error) {
     long value; ___curl_easy_get_info(handle, info, error, value); return value;
 }
 
-static CInt64 curl_easy_get_info_int64(CURL * handle, CURLINFO info, CFErrorRef *error) {
+static CInt64 curl_easy_get_info_int64(CURL * handle, TCURLInfo info, CFErrorRef *error) {
     CInt64 value; ___curl_easy_get_info(handle, info, error, value); return value;
 }
 
-static CSList curl_easy_get_info_list(CURL * handle, CURLINFO info, CFErrorRef *error) {
+static CSList curl_easy_get_info_list(CURL * handle, TCURLInfo info, CFErrorRef *error) {
     CSList value; __curl_easy_get_info(handle, info, error, value); return value;
 }
 
