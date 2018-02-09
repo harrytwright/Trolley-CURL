@@ -987,6 +987,23 @@ typedef CF_ENUM(Integer, TCURLInfo) {
     TCInfo(LastOne, CURLINFO_LASTONE),
 } CF_SWIFT_NAME(Info);
 
+#define TCGlobalOptions(...) TCWrapper(TCURLGlobalOptions , __VA_ARGS__)
+
+typedef CF_OPTIONS(NSInteger, TCURLGlobalOptions) {
+    TCGlobalOptions(SSL, CURL_GLOBAL_SSL),
+    TCGlobalOptions(WIN32, CURL_GLOBAL_WIN32),
+    TCGlobalOptions(All, CURL_GLOBAL_ALL),
+    TCGlobalOptions(Nothing, CURL_GLOBAL_NOTHING),
+    TCGlobalOptions(Default, CURL_GLOBAL_DEFAULT),
+    TCGlobalOptions(CURL_GLOBAL_ACK_EINTR, 5<<5),
+} CF_SWIFT_NAME(GlobalOptions);
+
+static NSInteger curl_global_init_with_options(TCURLGlobalOptions options) CF_SWIFT_NAME(TCURLGlobalInit(_:));
+
+static NSInteger curl_global_init_with_options(TCURLGlobalOptions options) {
+    return curl_global_init(options);
+}
+
 static CFErrorRef kCFErrorInvalidOption(TCURLOption option) {
     CFStringRef errorDesc = CFStringCreateWithCString(NULL, "Invalid Option", kCFStringEncodingUTF8);
     CFMutableDictionaryRef dictionary = CFDictionaryCreateMutable(nil, 0, nil, nil);
