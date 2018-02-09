@@ -28,8 +28,8 @@ typedef long long CInt64;
 
 typedef const char * CString;
 
-inline static CFStringRef kCURLWrapperErrorCode(void) {
-  return CFSTR("trl.curl.swift.wrapper.more.dots.hehe")
+inline static CFStringRef kCURLWrapperErrorDomain(void) {
+  return CFSTR("trl.curl.swift.wrapper.more.dots.hehe");
 }
 
 #pragma mark - Error Handling
@@ -39,7 +39,7 @@ static CFErrorRef curl_code_to_error(CURLcode code) {
     CFMutableDictionaryRef dictionary = CFDictionaryCreateMutable(nil, 0, nil, nil);
     CFDictionarySetValue(dictionary, kCFErrorLocalizedDescriptionKey, errorDesc);
 
-    return CFErrorCreate(NULL, kCURLWrapperErrorCode(), code, dictionary);
+    return CFErrorCreate(NULL, kCURLWrapperErrorDomain(), code, dictionary);
 }
 
 #pragma mark - Options
@@ -1014,7 +1014,7 @@ static CFErrorRef kCFErrorInvalidOption(TCURLOption option) {
     CFMutableDictionaryRef dictionary = CFDictionaryCreateMutable(nil, 0, nil, nil);
     CFDictionarySetValue(dictionary, kCFErrorLocalizedDescriptionKey, errorDesc);
 
-    return CFErrorCreate(NULL, kCURLWrapperErrorCode(), option, dictionary);
+    return CFErrorCreate(NULL, kCURLWrapperErrorDomain(), option, dictionary);
 }
 
 #pragma mark - Setters
