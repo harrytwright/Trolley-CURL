@@ -38,12 +38,12 @@ static CFErrorRef curl_code_to_error(CURLcode code) {
     return CFErrorCreate(NULL, CFSTR("trl.mbaas.curl.swift"), code, dictionary);
 }
 
-static CFErrorRef kCFErrorInvalidOption() {
-    CFStringRef errorDesc = CFStringCreateWithCString(NULL, CFSTR("Invalid Option"), kCFStringEncodingUTF8);
+static CFErrorRef kCFErrorInvalidOption(TCURLOption option) {
+    CFStringRef errorDesc = CFStringCreateWithCString(NULL, "Invalid Option", kCFStringEncodingUTF8);
     CFMutableDictionaryRef dictionary = CFDictionaryCreateMutable(nil, 0, nil, nil);
     CFDictionarySetValue(dictionary, kCFErrorLocalizedDescriptionKey, errorDesc);
 
-    return CFErrorCreate(NULL, CFSTR("trl.mbaas.curl.swift"), code, dictionary);
+    return CFErrorCreate(NULL, CFSTR("trl.mbaas.curl.swift"), option, dictionary);
 }
 
 #pragma mark - Options
@@ -936,7 +936,7 @@ typedef CF_ENUM(Integer, TCURLOption) {
 #pragma mark - Setters
 
 #define ___curl_easy_set_opt(_c, _o, _v, _e) \
-    if (_o == TCURLOptionPostData) { _e = kCFErrorInvalidOption; return; }\
+    if (_o == TCURLOptionPostData) { _e = kCFErrorInvalidOption(TCURLOptionPostData); return; }\
     CURLcode code = curl_easy_setopt(_c, _o, _v); \
     if (code != CURLE_OK && _e) { \
         *_e = curl_code_to_error(code); \
