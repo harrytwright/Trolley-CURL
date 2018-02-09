@@ -40,13 +40,22 @@ static CFErrorRef curl_code_to_error(CURLcode code) {
 
 #pragma mark - Options
 
-#define __TCOption_GET_MACRO(_1, _2, _3, NAME, ...) NAME
-#define __TCOption_Anon(_name) TCURLOption##_name
-#define __TCOption_C(_name, _type) TCURLOption##_name = _type
-#define __TCOption_SWIFT_NAME(_name, _type, _swift) TCURLOption##_name CF_SWIFT_NAME(_swift) = _type
+/* These work like NS_ENUM macro anc create the required object based on the input values */
+#define __TC_WRAPPER_GET_MACRO(_1, _2, _3, NAME, ...) NAME
+#define __TC_WRAPPER_ANON(_object, _name) _object##_name
+#define __TC_WRAPPER_C(_object, _name, _type) _object##_name = _type
+#define __TC_WRAPPER_SWIFT_NAME(_object, _name, _type, _swift) _object##_name CF_SWIFT_NAME(_swift) = _type
 
 /** Set the new option with the old one */
-#define TCOption(...) __TCOption_GET_MACRO(__VA_ARGS__, __TCOption_SWIFT_NAME, __TCOption_C, __TCOption_Anon, ) (__VA_ARGS__)
+#define TCWrapper(x, ...) __TC_WRAPPER_GET_MACRO(__VA_ARGS__, __TC_WRAPPER_SWIFT_NAME, __TC_WRAPPER_C, __TC_WRAPPER_ANON, ) (x, __VA_ARGS__)
+
+// #define __TCOption_GET_MACRO(_1, _2, _3, NAME, ...) NAME
+// #define __TCOption_Anon(_name) TCURLOption##_name
+// #define __TCOption_C(_name, _type) TCURLOption##_name = _type
+// #define __TCOption_SWIFT_NAME(_name, _type, _swift) TCURLOption##_name CF_SWIFT_NAME(_swift) = _type
+
+/** Set the new option with the old one */
+#define TCOption(...) TCWrapper(TCURLOption, __VA_ARGS__)
 
 typedef long Integer;
 
@@ -924,6 +933,14 @@ typedef CF_ENUM(Integer, TCURLOption) {
     /* Custom option, sending this will set `CURLOPT_POSTFILEDSIZE_LARGE` and `CURLOPT_COPYPOSTFIELDS` */
     TCOption(PostData),
 } CF_SWIFT_NAME(Option);
+
+#define __TCInfo_GET_MACRO(_1, _2, _3, NAME, ...) NAME
+#define __TCInfo_Anon(_name) TCURLInfo##_name
+#define __TCInfo_C(_name, _type) TCURLInfo##_name = _type
+#define __TCInfo_SWIFT_NAME(_name, _type, _swift) TCURLInfo##_name CF_SWIFT_NAME(_swift) = _type
+
+/** Set the new option with the old one */
+#define TCInfo(...) __TCInfo_GET_MACRO(__VA_ARGS__, __TCInfo_SWIFT_NAME, __TCInfo_C, __TCInfo_Anon, ) (__VA_ARGS__)
 
 static CFErrorRef kCFErrorInvalidOption(TCURLOption option) {
     CFStringRef errorDesc = CFStringCreateWithCString(NULL, "Invalid Option", kCFStringEncodingUTF8);
