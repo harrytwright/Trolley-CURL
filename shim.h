@@ -995,7 +995,7 @@ typedef CF_OPTIONS(NSInteger, TCURLGlobalOptions) {
     TCGlobalOptions(All, CURL_GLOBAL_ALL),
     TCGlobalOptions(Nothing, CURL_GLOBAL_NOTHING),
     TCGlobalOptions(Default, CURL_GLOBAL_DEFAULT),
-    TCGlobalOptions(CURL_GLOBAL_ACK_EINTR, 5<<5),
+    TCGlobalOptions(ACKEINTR, CURL_GLOBAL_ACK_EINTR),
 } CF_SWIFT_NAME(GlobalOptions);
 
 static NSInteger curl_global_init_with_options(TCURLGlobalOptions options) CF_SWIFT_NAME(TCURLGlobalInit(_:));
