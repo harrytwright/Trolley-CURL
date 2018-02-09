@@ -920,6 +920,9 @@ typedef CF_ENUM(Integer, TCURLOption) {
 
   /* Suppress proxy CONNECT response headers from user callbacks */
   TCOption(SuppressConnectHeaders, CURLOPT_SUPPRESS_CONNECT_HEADERS),
+
+    /* Custom option, sending this will set `CURLOPT_POSTFILEDSIZE_LARGE` and `CURLOPT_COPYPOSTFIELDS` */
+    TCOption(PostData),
 } CF_SWIFT_NAME(Option);
 
 #pragma mark - Setters
@@ -929,6 +932,14 @@ typedef CF_ENUM(Integer, TCURLOption) {
     if (code != CURLE_OK && _e) { \
         *_e = curl_code_to_error(code); \
     }
+
+#define ARRAY_LENGTH(x) (sizeof(x) / sizeof((x)[0]))
+
+static void curl_easy_set_post_data(CURL * handle, UInt8 data[], CFErrorRef *error) {
+    curl_easy_set_opt_long(handle, TCURLOptionPostfieldSize, (int) ARRAY_LENGTH(data), error);
+    if error { return }
+    curl_easy_set_opt_void(handle, TCURLOptionCopyPostFields, &data, error);
+}
 
 static void curl_easy_set_opt_long(CURL * handle, TCURLOption option, long value, CFErrorRef *error)
 {
