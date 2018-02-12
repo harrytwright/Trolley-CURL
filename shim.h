@@ -16,33 +16,34 @@
 /** Use CoreFoundation to help wrap, will need to see if works with linux, if not work around?? */
 #include <CoreFoundation/CoreFoundation.h>
 
+CF_EXTERN_C_BEGIN
+CF_ASSUME_NONNULL_BEGIN
+
 #pragma mark - Typedef
 
-typedef size_t (*curl_func)(void * ptr, size_t size, size_t num, void * ud);
+typedef CURL * TCURLEasyHandle;
+
+typedef CURLM * TCURLMultiHandle;
+
+typedef size_t (*CURLFunctionBlock)(char *_Nullable ptr, size_t size, size_t num, void *_Nullable ud);
 
 typedef struct curl_slist * CSList;
 
-typedef void * AnyVoid;
+typedef void * AnyCPointer;
 
 typedef long long CInt64;
 
 typedef const char * CString;
 
-inline static CFStringRef kCURLWrapperErrorDomain(void) {
-  return CFSTR("trl.curl.swift.wrapper.more.dots.hehe");
-}
+typedef CURLcode TCURLEasyCode;
+
+typedef CURLMcode TCURLMultiCode;
 
 #pragma mark - Error Handling
 
-static CFErrorRef curl_code_to_error(CURLcode code) {
-    CFStringRef errorDesc = CFStringCreateWithCString(NULL, curl_easy_strerror(code), kCFStringEncodingUTF8);
-    CFMutableDictionaryRef dictionary = CFDictionaryCreateMutable(nil, 0, nil, nil);
-    CFDictionarySetValue(dictionary, kCFErrorLocalizedDescriptionKey, errorDesc);
+CF_EXPORT CFErrorRef TCURLEasyCodeToError(TCURLEasyCode code);
 
-    return CFErrorCreate(NULL, kCURLWrapperErrorDomain(), code, dictionary);
-}
-
-#pragma mark - Options
+#pragma mark - Enum Wrapping
 
 /* These work like NS_ENUM macro anc create the required object based on the input values */
 #define __TC_WRAPPER_GET_MACRO(_1, _2, _3, NAME, ...) NAME
@@ -1002,82 +1003,24 @@ typedef CF_OPTIONS(Integer, TCURLGlobalOptions) {
     TCGlobalOptions(ACKEINTR, CURL_GLOBAL_ACK_EINTR),
 } CF_SWIFT_NAME(GlobalOptions);
 
-/** CF_SWIFT_NAME() is used so we can keep it as close to the curl one so it makes sense */
-static NSInteger curl_global_init_with_options(TCURLGlobalOptions options) CF_SWIFT_NAME(TCURLGlobalInit(_:));
+/* Initaliser */
+CF_EXPORT Integer TCURLGlobalInit(TCURLGlobalOptions options);
 
-static NSInteger curl_global_init_with_options(TCURLGlobalOptions options) {
-    return curl_global_init(options);
-}
+/* Setters */
+CF_EXPORT void TCURLSetEasyOptionLong(TCURLEasyHandle handle, TCURLOption option, long value, CFErrorRef _Nullable *_Nullable error);
+CF_EXPORT void TCURLSetEasyOptionCString(TCURLEasyHandle handle, TCURLOption option, CString value, CFErrorRef _Nullable *_Nullable error);
+CF_EXPORT void TCURLSetEasyOptionInt64(TCURLEasyHandle handle, TCURLOption option, CInt64 value, CFErrorRef _Nullable *_Nullable error);
+CF_EXPORT void TCURLSetEasyOptionSList(TCURLEasyHandle handle, TCURLOption option, CSList value, CFErrorRef _Nullable *_Nullable error);
+CF_EXPORT void TCURLSetEasyOptionPointer(TCURLEasyHandle handle, TCURLOption option, AnyCPointer value, CFErrorRef _Nullable *_Nullable error);
+CF_EXPORT void TCURLSetEasyOptionBlock(TCURLEasyHandle handle, TCURLOption option, CURLFunctionBlock value, CFErrorRef _Nullable *_Nullable error);
 
-static CFErrorRef kCFErrorInvalidOption(TCURLOption option) {
-    CFStringRef errorDesc = CFStringCreateWithCString(NULL, "Invalid Option", kCFStringEncodingUTF8);
-    CFMutableDictionaryRef dictionary = CFDictionaryCreateMutable(nil, 0, nil, nil);
-    CFDictionarySetValue(dictionary, kCFErrorLocalizedDescriptionKey, errorDesc);
+/* Getters */
+CF_EXPORT CString TCURLEasyGetInfoCString(TCURLEasyHandle handle, TCURLInfo info, CFErrorRef _Nullable *_Nullable error);
+CF_EXPORT long TCURLEasyGetInfoLong(TCURLEasyHandle handle, TCURLInfo info, CFErrorRef _Nullable *_Nullable error);
+CF_EXPORT CInt64 TCURLEasyGetInfoInt64(TCURLEasyHandle handle, TCURLInfo info, CFErrorRef _Nullable *_Nullable error);
+CF_EXPORT CSList TCURLEasyGetInfoSList(TCURLEasyHandle handle, TCURLInfo info, CFErrorRef _Nullable *_Nullable error);
 
-    return CFErrorCreate(NULL, kCURLWrapperErrorDomain(), option, dictionary);
-}
-
-#pragma mark - Setters
-
-#define ___curl_easy_set_opt(_c, _o, _v, _e) \
-    if (_o == TCURLOptionPostData) { if (_e) { *_e = kCFErrorInvalidOption(TCURLOptionPostData); } return; }\
-    CURLcode code = curl_easy_setopt(_c, _o, _v); \
-    if (code != CURLE_OK && _e) { \
-        *_e = curl_code_to_error(code); \
-    }
-
-static void curl_easy_set_opt_long(CURL * handle, TCURLOption option, long value, CFErrorRef *error)
-{
-    ___curl_easy_set_opt(handle, option, value, error)
-}
-
-static void curl_easy_set_opt_cstr(CURL * handle, TCURLOption option, CString value, CFErrorRef *error)
-{
-    ___curl_easy_set_opt(handle, option, value, error)
-}
-
-static void curl_easy_set_opt_int64(CURL * handle, TCURLOption option, CInt64 value, CFErrorRef *error)
-{
-    ___curl_easy_set_opt(handle, option, value, error)
-}
-
-static void curl_easy_set_opt_slist(CURL * handle, TCURLOption option, CSList value, CFErrorRef *error)
-{
-    ___curl_easy_set_opt(handle, option, value, error)
-}
-
-static void curl_easy_set_opt_void(CURL * handle, TCURLOption option, AnyVoid value, CFErrorRef *error)
-{
-    ___curl_easy_set_opt(handle, option, value, error)
-}
-
-static void curl_easy_set_opt_func(CURL * handle, TCURLOption option, curl_func value, CFErrorRef *error)
-{
-    ___curl_easy_set_opt(handle, option, value, error)
-}
-
-#pragma mark - Getters
-
-#define ___curl_easy_get_info(_c, _i, _e, _v) \
-CURLcode code = curl_easy_getinfo(_c, _i, &_v); \
-if (code != CURLE_OK && _e) { \
-*_e = curl_code_to_error(code); \
-} \
-
-static CString curl_easy_get_info_cstr(CURL * handle, TCURLInfo info, CFErrorRef *error) {
-    CString value; ___curl_easy_get_info(handle, info, error, value); return value;
-}
-
-static long curl_easy_get_info_long(CURL * handle, TCURLInfo info, CFErrorRef *error) {
-    long value; ___curl_easy_get_info(handle, info, error, value); return value;
-}
-
-static CInt64 curl_easy_get_info_int64(CURL * handle, TCURLInfo info, CFErrorRef *error) {
-    CInt64 value; ___curl_easy_get_info(handle, info, error, value); return value;
-}
-
-static CSList curl_easy_get_info_list(CURL * handle, TCURLInfo info, CFErrorRef *error) {
-    CSList value; __curl_easy_get_info(handle, info, error, value); return value;
-}
+CF_ASSUME_NONNULL_END
+CF_EXTERN_C_END
 
 #endif /* _shim_h_ */
