@@ -30,6 +30,26 @@ Integer TCURLGlobalInit(TCURLGlobalOptions options) {
     return curl_global_init(options);
 }
 
+TCURLEasyHandle TCURLEasyHandleInit(void) {
+    return curl_easy_init();
+}
+
+void TCURLEasyEasyHandleDeinit(TCURLEasyHandle handle) {
+    curl_easy_cleanup(handle);
+}
+
+TCURLMultiHandle TCURLMultiHandleInit(void) {
+    return curl_multi_init();
+}
+
+TCURLMultiCode TCURLMultiHandleDeinit(TCURLMultiHandle handle) {
+    return curl_multi_cleanup(handle);
+}
+
+TCURLMultiCode TCURLMultiHandleAddHandle(TCURLMultiHandle handle, TCURLEasyHandle curl) {
+    return curl_multi_add_handle(handle, curl);
+}
+
 /* Setters */
 
 #define ___curl_easy_set_opt(_c, _o, _v, _e) \
@@ -39,27 +59,27 @@ Integer TCURLGlobalInit(TCURLGlobalOptions options) {
         *_e = curl_code_to_error(code); \
     }
 
-void TCURLSetEasyOptionLong(TCURLEasyHandle handle, TCURLOption option, long value, CFErrorRef _Nullable *_Nullable error) {
+void TCURLEasySetOptionLong(TCURLEasyHandle handle, TCURLOption option, long value, CFErrorRef _Nullable *_Nullable error) {
   ___curl_easy_set_opt(handle, option, value, error)
 }
 
-void TCURLSetEasyOptionCString(TCURLEasyHandle handle, TCURLOption option, CString value, CFErrorRef _Nullable *_Nullable error) {
+void TCURLEasySetOptionCString(TCURLEasyHandle handle, TCURLOption option, CString value, CFErrorRef _Nullable *_Nullable error) {
     ___curl_easy_set_opt(handle, option, value, error)
 }
 
-void TCURLSetEasyOptionInt64(TCURLEasyHandle handle, TCURLOption option, CInt64 value, CFErrorRef _Nullable *_Nullable error) {
+void TCURLEasySetOptionInt64(TCURLEasyHandle handle, TCURLOption option, CInt64 value, CFErrorRef _Nullable *_Nullable error) {
     ___curl_easy_set_opt(handle, option, value, error)
 }
 
-void TCURLSetEasyOptionSList(TCURLEasyHandle handle, TCURLOption option, CSList value, CFErrorRef _Nullable *_Nullable error) {
+void TCURLEasySetOptionSList(TCURLEasyHandle handle, TCURLOption option, CSList value, CFErrorRef _Nullable *_Nullable error) {
     ___curl_easy_set_opt(handle, option, value, error)
 }
 
-void TCURLSetEasyOptionPointer(TCURLEasyHandle handle, TCURLOption option, AnyCPointer value, CFErrorRef _Nullable *_Nullable error) {
+void TCURLEasySetOptionPointer(TCURLEasyHandle handle, TCURLOption option, AnyCPointer value, CFErrorRef _Nullable *_Nullable error) {
     ___curl_easy_set_opt(handle, option, value, error)
 }
 
-void TCURLSetEasyOptionBlock(TCURLEasyHandle handle, TCURLOption option, CURLFunctionBlock value, CFErrorRef _Nullable *_Nullable error) {
+void TCURLEasySetOptionBlock(TCURLEasyHandle handle, TCURLOption option, CURLFunctionBlock value, CFErrorRef _Nullable *_Nullable error) {
     ___curl_easy_set_opt(handle, option, value, error)
 }
 
