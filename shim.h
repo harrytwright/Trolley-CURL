@@ -1030,7 +1030,7 @@ CF_EXPORT CInt64 TCURLEasyGetInfoInt64(TCURLEasyHandle handle, TCURLInfo info, C
 CF_EXPORT CSList TCURLEasyGetInfoSList(TCURLEasyHandle handle, TCURLInfo info, CFErrorRef _Nullable *_Nullable error);
 
 /* Error Handling */
-CFErrorRef TCURLCodeToError(TCURLCode code) {
+CFErrorRef TCURLCodeToError(TCURLEasyCode code) {
     CFStringRef errorDesc = CFStringCreateWithCString(NULL, curl_easy_strerror(code), kCFStringEncodingUTF8);
     CFMutableDictionaryRef dictionary = CFDictionaryCreateMutable(nil, 0, nil, nil);
     CFDictionarySetValue(dictionary, kCFErrorLocalizedDescriptionKey, errorDesc);
