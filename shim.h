@@ -1062,7 +1062,7 @@ Integer TCURLGlobalInit(TCURLGlobalOptions options) {
 }
 
 void TCURLGlobalDeinit(void) {
-    curl_global_cleanup()
+    curl_global_cleanup();
 }
 
 TCURLEasyHandle TCURLEasyHandleInit(void) {
@@ -1074,7 +1074,7 @@ void TCURLEasyHandleDeinit(TCURLEasyHandle handle) {
 }
 
 TCURLEasyCode TCURLEasyPerform(TCURLEasyHandle handle) {
-    return curl_easy_perform(handle)
+    return curl_easy_perform(handle);
 }
 
 TCURLMultiHandle TCURLMultiHandleInit(void) {
