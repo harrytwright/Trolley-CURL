@@ -21,6 +21,8 @@ CF_ASSUME_NONNULL_BEGIN
 
 #pragma mark - Typedef
 
+#define TC_STATIC static
+
 typedef CURL * TCURLEasyHandle;
 
 typedef CURLM * TCURLMultiHandle;
@@ -41,7 +43,7 @@ typedef CURLMcode TCURLMultiCode;
 
 #pragma mark - Error Handling
 
-CF_EXPORT CFErrorRef TCURLEasyCodeToError(TCURLEasyCode code);
+TC_STATIC CFErrorRef TCURLEasyCodeToError(TCURLEasyCode code);
 
 #pragma mark - Enum Wrapping
 
@@ -1003,31 +1005,31 @@ typedef CF_OPTIONS(Integer, TCURLGlobalOptions) {
     TCGlobalOptions(ACKEINTR, CURL_GLOBAL_ACK_EINTR),
 } CF_SWIFT_NAME(GlobalOptions);
 
-CF_EXPORT CFErrorRef kCFErrorInvalidOption(TCURLOption option);
+TC_STATIC CFErrorRef kCFErrorInvalidOption(TCURLOption option);
 
 /* Initaliser */
-CF_EXPORT Integer TCURLGlobalInit(TCURLGlobalOptions options);
+TC_STATIC Integer TCURLGlobalInit(TCURLGlobalOptions options);
 
-CF_EXPORT TCURLEasyHandle TCURLEasyHandleInit(void);
-CF_EXPORT void TCURLEasyEasyHandleDeinit(TCURLEasyHandle handle);
+TC_STATIC TCURLEasyHandle TCURLEasyHandleInit(void);
+TC_STATIC void TCURLEasyEasyHandleDeinit(TCURLEasyHandle handle);
 
-CF_EXPORT TCURLMultiHandle TCURLMultiHandleInit(void);
-CF_EXPORT TCURLMultiCode TCURLMultiHandleDeinit(TCURLMultiHandle handle);
-CF_EXPORT TCURLMultiCode TCURLMultiHandleAddHandle(TCURLMultiHandle handle, TCURLEasyHandle curl);
+TC_STATIC TCURLMultiHandle TCURLMultiHandleInit(void);
+TC_STATIC TCURLMultiCode TCURLMultiHandleDeinit(TCURLMultiHandle handle);
+TC_STATIC TCURLMultiCode TCURLMultiHandleAddHandle(TCURLMultiHandle handle, TCURLEasyHandle curl);
 
 /* Setters */
-CF_EXPORT void TCURLEasySetOptionLong(TCURLEasyHandle handle, TCURLOption option, long value, CFErrorRef _Nullable *_Nullable error);
-CF_EXPORT void TCURLEasySetOptionCString(TCURLEasyHandle handle, TCURLOption option, CString value, CFErrorRef _Nullable *_Nullable error);
-CF_EXPORT void TCURLEasySetOptionInt64(TCURLEasyHandle handle, TCURLOption option, CInt64 value, CFErrorRef _Nullable *_Nullable error);
-CF_EXPORT void TCURLEasySetOptionSList(TCURLEasyHandle handle, TCURLOption option, CSList value, CFErrorRef _Nullable *_Nullable error);
-CF_EXPORT void TCURLEasySetOptionPointer(TCURLEasyHandle handle, TCURLOption option, AnyCPointer value, CFErrorRef _Nullable *_Nullable error);
-CF_EXPORT void TCURLEasySetOptionBlock(TCURLEasyHandle handle, TCURLOption option, CURLFunctionBlock value, CFErrorRef _Nullable *_Nullable error);
+TC_STATIC void TCURLEasySetOptionLong(TCURLEasyHandle handle, TCURLOption option, long value, CFErrorRef _Nullable *_Nullable error);
+TC_STATIC void TCURLEasySetOptionCString(TCURLEasyHandle handle, TCURLOption option, CString value, CFErrorRef _Nullable *_Nullable error);
+TC_STATIC void TCURLEasySetOptionInt64(TCURLEasyHandle handle, TCURLOption option, CInt64 value, CFErrorRef _Nullable *_Nullable error);
+TC_STATIC void TCURLEasySetOptionSList(TCURLEasyHandle handle, TCURLOption option, CSList value, CFErrorRef _Nullable *_Nullable error);
+TC_STATIC void TCURLEasySetOptionPointer(TCURLEasyHandle handle, TCURLOption option, AnyCPointer value, CFErrorRef _Nullable *_Nullable error);
+TC_STATIC void TCURLEasySetOptionBlock(TCURLEasyHandle handle, TCURLOption option, CURLFunctionBlock value, CFErrorRef _Nullable *_Nullable error);
 
 /* Getters */
-CF_EXPORT CString TCURLEasyGetInfoCString(TCURLEasyHandle handle, TCURLInfo info, CFErrorRef _Nullable *_Nullable error);
-CF_EXPORT long TCURLEasyGetInfoLong(TCURLEasyHandle handle, TCURLInfo info, CFErrorRef _Nullable *_Nullable error);
-CF_EXPORT CInt64 TCURLEasyGetInfoInt64(TCURLEasyHandle handle, TCURLInfo info, CFErrorRef _Nullable *_Nullable error);
-CF_EXPORT CSList TCURLEasyGetInfoSList(TCURLEasyHandle handle, TCURLInfo info, CFErrorRef _Nullable *_Nullable error);
+TC_STATIC CString TCURLEasyGetInfoCString(TCURLEasyHandle handle, TCURLInfo info, CFErrorRef _Nullable *_Nullable error);
+TC_STATIC long TCURLEasyGetInfoLong(TCURLEasyHandle handle, TCURLInfo info, CFErrorRef _Nullable *_Nullable error);
+TC_STATIC CInt64 TCURLEasyGetInfoInt64(TCURLEasyHandle handle, TCURLInfo info, CFErrorRef _Nullable *_Nullable error);
+TC_STATIC CSList TCURLEasyGetInfoSList(TCURLEasyHandle handle, TCURLInfo info, CFErrorRef _Nullable *_Nullable error);
 
 #pragma mark - Function Internals
 
