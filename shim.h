@@ -1029,6 +1029,12 @@ CF_EXPORT long TCURLEasyGetInfoLong(TCURLEasyHandle handle, TCURLInfo info, CFEr
 CF_EXPORT CInt64 TCURLEasyGetInfoInt64(TCURLEasyHandle handle, TCURLInfo info, CFErrorRef _Nullable *_Nullable error);
 CF_EXPORT CSList TCURLEasyGetInfoSList(TCURLEasyHandle handle, TCURLInfo info, CFErrorRef _Nullable *_Nullable error);
 
+#pragma mark - Function Internals
+
+inline static CFStringRef kCURLWrapperErrorDomain(void) {
+  return CFSTR("trl.curl.swift.wrapper.more.dots.hehe");
+}
+
 /* Error Handling */
 CFErrorRef TCURLCodeToError(TCURLEasyCode code) {
     CFStringRef errorDesc = CFStringCreateWithCString(NULL, curl_easy_strerror(code), kCFStringEncodingUTF8);
@@ -1077,7 +1083,7 @@ TCURLMultiCode TCURLMultiHandleAddHandle(TCURLMultiHandle handle, TCURLEasyHandl
     if (_o == TCURLOptionPostData) { if (_e) { *_e = kCFErrorInvalidOption(TCURLOptionPostData); } return; }\
     TCURLEasyCode code = curl_easy_setopt(_c, _o, _v); \
     if (code != CURLE_OK && _e) { \
-        *_e = curl_code_to_error(code); \
+        *_e = TCURLCodeToError(code); \
     }
 
 void TCURLEasySetOptionLong(TCURLEasyHandle handle, TCURLOption option, long value, CFErrorRef _Nullable *_Nullable error) {
@@ -1109,7 +1115,7 @@ void TCURLEasySetOptionBlock(TCURLEasyHandle handle, TCURLOption option, CURLFun
 #define ___curl_easy_get_info(_c, _i, _e, _v) \
     CURLcode code = curl_easy_getinfo(_c, _i, &_v); \
     if (code != CURLE_OK && _e) { \
-    *_e = curl_code_to_error(code); \
+    *_e = TCURLCodeToError(code); \
     } \
 
 CString TCURLEasyGetInfoCString(TCURLEasyHandle handle, TCURLInfo info, CFErrorRef _Nullable *_Nullable error) {
