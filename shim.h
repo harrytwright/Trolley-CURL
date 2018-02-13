@@ -1009,9 +1009,11 @@ TC_STATIC CFErrorRef kCFErrorInvalidOption(TCURLOption option);
 
 /* Initaliser */
 TC_STATIC Integer TCURLGlobalInit(TCURLGlobalOptions options);
+TC_STATIC void TCURLGlobalDeinit(void);
 
 TC_STATIC TCURLEasyHandle TCURLEasyHandleInit(void);
-TC_STATIC void TCURLEasyEasyHandleDeinit(TCURLEasyHandle handle);
+TC_STATIC void TCURLEasyHandleDeinit(TCURLEasyHandle handle);
+TC_STATIC TCURLEasyCode TCURLEasyPerform(TCURLEasyHandle handle);
 
 TC_STATIC TCURLMultiHandle TCURLMultiHandleInit(void);
 TC_STATIC TCURLMultiCode TCURLMultiHandleDeinit(TCURLMultiHandle handle);
@@ -1059,12 +1061,20 @@ Integer TCURLGlobalInit(TCURLGlobalOptions options) {
     return curl_global_init(options);
 }
 
+void TCURLGlobalDeinit(void) {
+    curl_global_cleanup()
+}
+
 TCURLEasyHandle TCURLEasyHandleInit(void) {
     return curl_easy_init();
 }
 
-void TCURLEasyEasyHandleDeinit(TCURLEasyHandle handle) {
+void TCURLEasyHandleDeinit(TCURLEasyHandle handle) {
     curl_easy_cleanup(handle);
+}
+
+TCURLEasyCode TCURLEasyPerform(TCURLEasyHandle handle) {
+    return curl_easy_perform(handle)
 }
 
 TCURLMultiHandle TCURLMultiHandleInit(void) {
