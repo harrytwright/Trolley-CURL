@@ -1184,11 +1184,11 @@ CSList TCURLEasyGetInfoSList(TCURLEasyHandle handle, TCURLInfo info, CFErrorRef 
 
 // TODO: Add CFErrorRef
 TCURLMultiCode TCURLMultiSetOptionPointer(TCURLMultiHandle handle, CURLMoption option, AnyCPointer _Nullable a) {
-    return curl_multi_setopt(handlem option, a);
+    return curl_multi_setopt(handle, option, a);
 }
 
 TCURLMultiCode TCURLMultiSetOptionSocketFunction(TCURLMultiHandle handle, CURLMoption option, CURLSocketBlock block) {
-  return curl_multi_setopt(handlem option, block);
+  return curl_multi_setopt(handle, option, block);
 }
 
 CF_ASSUME_NONNULL_END
