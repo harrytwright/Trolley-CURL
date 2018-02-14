@@ -1057,7 +1057,7 @@ inline static CFStringRef kCURLWrapperErrorDomain(void) {
 }
 
 /* Error Handling */
-CFErrorRef TCURLCodeToError(TCURLEasyCode code) {
+static CFErrorRef TCURLCodeToError(TCURLEasyCode code) {
     CFStringRef errorDesc = CFStringCreateWithCString(NULL, curl_easy_strerror(code), kCFStringEncodingUTF8);
     CFMutableDictionaryRef dictionary = CFDictionaryCreateMutable(nil, 0, nil, nil);
     CFDictionarySetValue(dictionary, kCFErrorLocalizedDescriptionKey, errorDesc);
@@ -1065,7 +1065,7 @@ CFErrorRef TCURLCodeToError(TCURLEasyCode code) {
     return CFErrorCreate(NULL, kCURLWrapperErrorDomain(), code, dictionary);
 }
 
-CFErrorRef kCFErrorInvalidOption(TCURLOption option) {
+static CFErrorRef kCFErrorInvalidOption(TCURLOption option) {
     CFStringRef errorDesc = CFStringCreateWithCString(NULL, "Invalid Option", kCFStringEncodingUTF8);
     CFMutableDictionaryRef dictionary = CFDictionaryCreateMutable(nil, 0, nil, nil);
     CFDictionarySetValue(dictionary, kCFErrorLocalizedDescriptionKey, errorDesc);
