@@ -29,6 +29,8 @@ typedef CURLM * TCURLMultiHandle;
 
 typedef size_t (*CURLFunctionBlock)(char *_Nullable ptr, size_t size, size_t num, void *_Nullable ud);
 
+typedef int (*CURLSocketBlock)(TCURLEasyHandle easy, curl_socket_t s, int what, void *_Nullable ud, void *_Nullable socketp);
+
 typedef struct curl_slist * CSList;
 
 typedef void * AnyCPointer;
@@ -997,12 +999,12 @@ typedef CF_ENUM(Integer, TCURLInfo) {
 #define TCGlobalOptions(...) TCWrapper(TCURLGlobalOptions , __VA_ARGS__)
 
 typedef CF_OPTIONS(Integer, TCURLGlobalOptions) {
-    TCGlobalOptions(SSL, CURL_GLOBAL_SSL),
-    TCGlobalOptions(WIN32, CURL_GLOBAL_WIN32),
+    TCGlobalOptions(SSL, CURL_GLOBAL_SSL, ssl),
+    TCGlobalOptions(WIN32, CURL_GLOBAL_WIN32, win32),
     TCGlobalOptions(All, CURL_GLOBAL_ALL),
     TCGlobalOptions(Nothing, CURL_GLOBAL_NOTHING),
     TCGlobalOptions(Default, CURL_GLOBAL_DEFAULT),
-    TCGlobalOptions(ACKEINTR, CURL_GLOBAL_ACK_EINTR),
+    TCGlobalOptions(ACKEINTR, CURL_GLOBAL_ACK_EINTR, ack_eintr),
 } CF_SWIFT_NAME(GlobalOptions);
 
 TC_STATIC CFErrorRef kCFErrorInvalidOption(TCURLOption option);
@@ -1018,6 +1020,15 @@ TC_STATIC TCURLEasyCode TCURLEasyPerform(TCURLEasyHandle handle);
 TC_STATIC TCURLMultiHandle TCURLMultiHandleInit(void);
 TC_STATIC TCURLMultiCode TCURLMultiHandleDeinit(TCURLMultiHandle handle);
 TC_STATIC TCURLMultiCode TCURLMultiHandleAddHandle(TCURLMultiHandle handle, TCURLEasyHandle curl);
+TC_STATIC TCURLMultiCode TCURLMultiHandleRemoveHandle(TCURLMultiHandle handle, TCURLEasyHandle curl);
+
+typedef struct TCURLMultiHandleInfo {
+  TCURLMultiHandle _Nullable easyHandle;
+  TCURLEasyCode resultCode;
+} TCURLMultiHandleInfo;
+TC_STATIC TCURLMultiHandleInfo TCURLMultiHandleInfoRead(TCURLMultiHandle _Nullable handle, int * _Nullable msgs_in_queue);
+
+#pragma mark - Easy Handle
 
 /* Setters */
 TC_STATIC void TCURLEasySetOptionLong(TCURLEasyHandle handle, TCURLOption option, long value, CFErrorRef _Nullable *_Nullable error);
@@ -1032,6 +1043,12 @@ TC_STATIC CString TCURLEasyGetInfoCString(TCURLEasyHandle handle, TCURLInfo info
 TC_STATIC long TCURLEasyGetInfoLong(TCURLEasyHandle handle, TCURLInfo info, CFErrorRef _Nullable *_Nullable error);
 TC_STATIC CInt64 TCURLEasyGetInfoInt64(TCURLEasyHandle handle, TCURLInfo info, CFErrorRef _Nullable *_Nullable error);
 TC_STATIC CSList TCURLEasyGetInfoSList(TCURLEasyHandle handle, TCURLInfo info, CFErrorRef _Nullable *_Nullable error);
+
+#pragma mark - Multi Handle
+
+// TODO: Add CFErrorRef
+TC_STATIC TCURLMultiCode TCURLMultiSetOptionPointer(TCURLMultiHandle handle, CURLMoption option, AnyCPointer _Nullable a);
+TC_STATIC TCURLMultiCode TCURLMultiSetOptionSocketFunction(TCURLMultiHandle handle, CURLMoption option, CURLSocketBlock block);
 
 #pragma mark - Function Internals
 
@@ -1089,6 +1106,23 @@ TCURLMultiCode TCURLMultiHandleAddHandle(TCURLMultiHandle handle, TCURLEasyHandl
     return curl_multi_add_handle(handle, curl);
 }
 
+TCURLMultiCode TCURLMultiHandleRemoveHandle(TCURLMultiHandle handle, TCURLEasyHandle curl) {
+  return curl_multi_remove_handle(handle, curl);
+}
+
+TCURLMultiHandleInfo TCURLMultiHandleInfoRead(TCURLMultiHandle _Nullable handle, int * _Nullable msgs_in_queue) {
+    TCURLMultiHandleInfo info = {};
+    CURLMsg *msg = curl_multi_info_read(handle, msgs_in_queue);
+    if (msg == NULL) {
+        return info;
+    }
+    if (msg->msg != CURLMSG_DONE) {
+        return info;
+    }
+    info.resultCode = msg->data.result;
+    info.easyHandle = msg->easy_handle;
+    return info;
+ }
 /* Setters */
 
 #define ___curl_easy_set_opt(_c, _o, _v, _e) \
@@ -1144,6 +1178,17 @@ CInt64 TCURLEasyGetInfoInt64(TCURLEasyHandle handle, TCURLInfo info, CFErrorRef 
 
 CSList TCURLEasyGetInfoSList(TCURLEasyHandle handle, TCURLInfo info, CFErrorRef _Nullable *_Nullable error) {
     CSList value; __curl_easy_get_info(handle, info, error, value); return value;
+}
+
+#pragma mark - Multi Handle
+
+// TODO: Add CFErrorRef
+TCURLMultiCode TCURLMultiSetOptionPointer(TCURLMultiHandle handle, CURLMoption option, AnyCPointer _Nullable a) {
+    return curl_multi_setopt(handlem option, a);
+}
+
+TCURLMultiCode TCURLMultiSetOptionSocketFunction(TCURLMultiHandle handle, CURLMoption option, CURLSocketBlock block) {
+  return curl_multi_setopt(handlem option, block);
 }
 
 CF_ASSUME_NONNULL_END
