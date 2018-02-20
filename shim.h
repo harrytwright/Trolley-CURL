@@ -1041,10 +1041,10 @@ TC_STATIC void TCURLEasySetOptionPointer(TCURLEasyHandle handle, TCURLOption opt
 TC_STATIC void TCURLEasySetOptionBlock(TCURLEasyHandle handle, TCURLOption option, CURLFunctionBlock value, CFErrorRef _Nullable *_Nullable error);
 
 /* Getters */
-TC_STATIC CString TCURLEasyGetInfoCString(TCURLEasyHandle handle, TCURLInfo info, CFErrorRef _Nullable *_Nullable error);
+TC_STATIC CString _Nullable TCURLEasyGetInfoCString(TCURLEasyHandle handle, TCURLInfo info, CFErrorRef _Nullable *_Nullable error);
 TC_STATIC long TCURLEasyGetInfoLong(TCURLEasyHandle handle, TCURLInfo info, CFErrorRef _Nullable *_Nullable error);
 TC_STATIC CInt64 TCURLEasyGetInfoInt64(TCURLEasyHandle handle, TCURLInfo info, CFErrorRef _Nullable *_Nullable error);
-TC_STATIC CSList TCURLEasyGetInfoSList(TCURLEasyHandle handle, TCURLInfo info, CFErrorRef _Nullable *_Nullable error);
+TC_STATIC CSList _Nullable TCURLEasyGetInfoSList(TCURLEasyHandle handle, TCURLInfo info, CFErrorRef _Nullable *_Nullable error);
 
 #pragma mark - Multi Handle
 
@@ -1168,7 +1168,7 @@ void TCURLEasySetOptionBlock(TCURLEasyHandle handle, TCURLOption option, CURLFun
     } \
 
 CString TCURLEasyGetInfoCString(TCURLEasyHandle handle, TCURLInfo info, CFErrorRef _Nullable *_Nullable error) {
-    CString value; ___curl_easy_get_info(handle, info, error, value); return value;
+    CString value = nil; ___curl_easy_get_info(handle, info, error, value); return value;
 }
 
 long TCURLEasyGetInfoLong(TCURLEasyHandle handle, TCURLInfo info, CFErrorRef _Nullable *_Nullable error) {
@@ -1180,7 +1180,7 @@ CInt64 TCURLEasyGetInfoInt64(TCURLEasyHandle handle, TCURLInfo info, CFErrorRef 
 }
 
 CSList TCURLEasyGetInfoSList(TCURLEasyHandle handle, TCURLInfo info, CFErrorRef _Nullable *_Nullable error) {
-    CSList value; __curl_easy_get_info(handle, info, error, value); return value;
+    CSList value = nil; __curl_easy_get_info(handle, info, error, value); return value;
 }
 
 #pragma mark - Multi Handle
