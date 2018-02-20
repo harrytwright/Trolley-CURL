@@ -31,6 +31,8 @@ typedef size_t (*CURLFunctionBlock)(char *_Nullable ptr, size_t size, size_t num
 
 typedef int (*CURLSocketBlock)(TCURLEasyHandle easy, curl_socket_t s, int what, void *_Nullable ud, void *_Nullable socketp);
 
+typedef int (*CURLTimeoutBlock)(TCURLEasyHandle easy, long t, void *_Nullable ud);
+
 typedef struct curl_slist * CSList;
 
 typedef void * AnyCPointer;
@@ -1049,6 +1051,7 @@ TC_STATIC CSList TCURLEasyGetInfoSList(TCURLEasyHandle handle, TCURLInfo info, C
 // TODO: Add CFErrorRef
 TC_STATIC TCURLMultiCode TCURLMultiSetOptionPointer(TCURLMultiHandle handle, CURLMoption option, AnyCPointer _Nullable a);
 TC_STATIC TCURLMultiCode TCURLMultiSetOptionSocketFunction(TCURLMultiHandle handle, CURLMoption option, CURLSocketBlock block);
+TC_STATIC TCURLMultiCode TCURLMultiSetOptionTimeoutFunction(TCURLMultiHandle handle, CURLMoption option, CURLTimeoutBlock block);
 
 #pragma mark - Function Internals
 
@@ -1057,7 +1060,7 @@ inline static CFStringRef kCURLWrapperErrorDomain(void) {
 }
 
 /* Error Handling */
-static CFErrorRef TCURLCodeToError(TCURLEasyCode code) {
+inline static CFErrorRef TCURLCodeToError(TCURLEasyCode code) {
     CFStringRef errorDesc = CFStringCreateWithCString(NULL, curl_easy_strerror(code), kCFStringEncodingUTF8);
     CFMutableDictionaryRef dictionary = CFDictionaryCreateMutable(nil, 0, nil, nil);
     CFDictionarySetValue(dictionary, kCFErrorLocalizedDescriptionKey, errorDesc);
@@ -1065,7 +1068,7 @@ static CFErrorRef TCURLCodeToError(TCURLEasyCode code) {
     return CFErrorCreate(NULL, kCURLWrapperErrorDomain(), code, dictionary);
 }
 
-static CFErrorRef kCFErrorInvalidOption(TCURLOption option) {
+inline static CFErrorRef kCFErrorInvalidOption(TCURLOption option) {
     CFStringRef errorDesc = CFStringCreateWithCString(NULL, "Invalid Option", kCFStringEncodingUTF8);
     CFMutableDictionaryRef dictionary = CFDictionaryCreateMutable(nil, 0, nil, nil);
     CFDictionarySetValue(dictionary, kCFErrorLocalizedDescriptionKey, errorDesc);
@@ -1189,6 +1192,10 @@ TCURLMultiCode TCURLMultiSetOptionPointer(TCURLMultiHandle handle, CURLMoption o
 
 TCURLMultiCode TCURLMultiSetOptionSocketFunction(TCURLMultiHandle handle, CURLMoption option, CURLSocketBlock block) {
   return curl_multi_setopt(handle, option, block);
+}
+
+TCURLMultiCode TCURLMultiSetOptionTimeoutFunction(TCURLMultiHandle handle, CURLMoption option, CURLTimeoutBlock block) {
+    return curl_multi_setopt(handle, option, block);
 }
 
 CF_ASSUME_NONNULL_END
